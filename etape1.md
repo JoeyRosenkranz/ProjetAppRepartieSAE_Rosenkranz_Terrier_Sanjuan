@@ -6,6 +6,10 @@
     sudo apt install mysql-server
     sudo service mysql start
    ```
+   Lancer le service MySQL :
+   ```bash
+   sudo service mysql start
+    ```
 
    Créer un utilisateur root pour MySQL avec un mot de passe :
     ```bash
