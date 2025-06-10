@@ -18,10 +18,13 @@
     ```bash
     sudo mysql -u root -p
     ```
-   Créer la table 'restaurants' et ajouter des données (voir le fichier `restaurants.sql` dans le dossier `data` du
-   projet).
+   Créer la base de données`resto_nancy` :
+   ```sql
+   CREATE DATABASE resto_nancy;
+   USE resto_nancy;
+    ```
 
-3. Pour l'utiliser sur IntelliJ :
+3. Avant de continuer, il est important de s'assurer que la base de données est accessible depuis IntelliJ IDEA :
     - Ouvrir IntelliJ IDEA.
     - Aller dans `View` > `Tool Windows` > `Database`.
     - Cliquer sur le `+` pour ajouter une nouvelle connexion.
@@ -30,10 +33,16 @@
         - Host: `localhost`
         - Port: `3306`
         - User: `root`
+        - Database: `resto_nancy` (ou le nom de la base de données créée).
         - Password: `ton_mot_de_passe` (remplacer par le mot de passe choisi à la création de l'utilisateur root).
     - Cliquer sur `Test Connection` pour vérifier la connexion.
     - Si tout est correct, cliquer sur `OK` pour enregistrer la connexion.
 
    Normalement, la base de données devrait apparaître dans la fenêtre `Database` d'IntelliJ et vous pourrez interagir
    avec elle.
+
+4. Créer les tables depuis le fichier 'restaurants.sql' :
+   - Ouvrir le fichier `restaurant.sql` dans IntelliJ IDEA.
+   - Sélectionner tout le contenu du fichier.
+   - Cliquer droit et choisir `Execute Selection` ou utiliser le raccourci `Ctrl + Enter` pour exécuter les commandes SQL.
    
