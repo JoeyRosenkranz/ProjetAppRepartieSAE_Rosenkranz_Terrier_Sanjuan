@@ -5,6 +5,10 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
+
+// FAIRE LE FETCH
+
+
 // juste pour test a remplacer par bd
 const restaurants = [
   { id: 1, name: 'Le Bon Miam', address: '1 rue du Goût', lat: 48.6925, lng: 6.1848 },
@@ -14,7 +18,7 @@ const restaurants = [
 
 // compiler et afficher la liste avec Handlebars
 const source = document.getElementById('tpl-restaurant').innerHTML;
-const template = Handlebars.compile(source);
+const template = Handlebars.compile(source); // pour afficher des resto
 document.getElementById('restaurantList').innerHTML = template(restaurants);
 
 // gérer le clic sur un resto
