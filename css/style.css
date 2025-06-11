@@ -112,8 +112,10 @@
 
 /* bouton “Voir sur la carte” */
 .btn-secondary {
-  background: #666;
+  background: #FF00FF;
   color: white;
+  
+
 }
 .btn-secondary:hover {
   opacity: 0.9;
@@ -125,3 +127,12 @@
   margin-bottom: 1.5rem;
 }
 
+/* Ajouter un espace au-dessus du bouton des Velib */
+.btn-secondary {
+  margin-top: 1rem; /* Ajustez la valeur selon vos besoins */
+}
+
+/* Exemple si le bouton est dans un conteneur spécifique */
+.velib-container .btn-secondary {
+  margin-top: 1rem; /* Ajustez la valeur selon vos besoins */
+}
