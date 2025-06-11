@@ -20,10 +20,20 @@
   <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js"></script>
 
   
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  <script
+    defer
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""></script>
-  <script defer src="js/index.js"></script>
+    crossorigin=""
+  ></script>
+
+  
+  <script type="module" defer src="js/index.js"></script>
+
+  <style>
+    html, body { height:100%; margin:0; padding:0; }
+    #map { height:80vh; width:100%; }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -31,29 +41,46 @@
   </header>
 
   <main class="app-container">
-    
     <aside class="sidebar">
+      <h2>Restaurants</h2>
       <div class="search-box">
         <input id="searchInput" type="text" placeholder="Rechercher un restaurant…">
       </div>
-      <ul id="restaurantList" class="restaurant-list">
-        
-      </ul>
+      <ul id="restaurantList" class="restaurant-list"></ul>
+
+      <hr>
+
+      <h2>Stations Vélib’</h2>
+      <ul id="stationList" class="restaurant-list"></ul>
     </aside>
 
-    
     <section id="map" class="map-container"></section>
   </main>
 
   
   <script id="tpl-restaurant" type="text/x-handlebars-template">
     {{#each this}}
-    <li class="restaurant-item" data-id="{{id}}">
-      <h2>{{name}}</h2>
-      <p>{{address}}</p>
-      <button class="btn btn-primary btn-reserve">Réserver</button>
-      <button class="btn btn-primary btn-lister">Lister les tables</button>
-    </li>
+      <li class="restaurant-item card" data-id="{{id}}">
+        <h3>{{name}}</h3>
+        <p>{{address}}</p>
+        <button class="btn btn-primary btn-reserve">Réserver</button>
+      </li>
+    {{/each}}
+  </script>
+
+  
+  <script id="tpl-station" type="text/x-handlebars-template">
+    {{#each stations}}
+      <li class="station-item card" data-id="{{id}}">
+        <h3>{{name}}</h3>
+        <p>{{address}}</p>
+        <p>
+          <span>🚲 {{num_bikes_available}}</span>
+          &nbsp;|&nbsp;
+          <span>🅿️ {{num_docks_available}}</span>
+        </p>
+        <button class="btn btn-secondary btn-show">Voir sur la carte</button>
+      </li>
     {{/each}}
   </script>
 </body>
