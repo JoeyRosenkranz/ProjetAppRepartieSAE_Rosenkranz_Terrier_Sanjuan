@@ -121,18 +121,17 @@
   opacity: 0.9;
 }
 
-/* espace entre chaque card (restos & stations) */
 .restaurant-list li,
 .station-list li {
   margin-bottom: 1.5rem;
 }
 
-/* Ajouter un espace au-dessus du bouton des Velib */
+
 .btn-secondary {
-  margin-top: 1rem; /* Ajustez la valeur selon vos besoins */
+  margin-top: 1rem; 
 }
 
-/* Exemple si le bouton est dans un conteneur spécifique */
+
 .velib-container .btn-secondary {
-  margin-top: 1rem; /* Ajustez la valeur selon vos besoins */
+  margin-top: 1rem; 
 }
