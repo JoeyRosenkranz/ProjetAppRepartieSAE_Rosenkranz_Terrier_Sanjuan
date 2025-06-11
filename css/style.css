@@ -1,0 +1,103 @@
+
+:root {
+    --brand-color: #ff6f61;
+    --text-color: #333;
+    --bg-color: #fafafa;
+    --shadow: 0 2px 8px rgba(0,0,0,0.1);
+    --radius: 8px;
+  }
+  
+
+  * {
+    margin: 0; padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    color: var(--text-color);
+    background: var(--bg-color);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  
+  .site-header {
+    background: var(--brand-color);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+ 
+  .app-container {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+  
+  
+  .sidebar {
+    width: 300px;
+    background: white;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 2px solid #ddd;
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+  }
+  .restaurant-list {
+    list-style: none;
+  }
+  .restaurant-item {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  .restaurant-item h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+  }
+  .restaurant-item p {
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  .btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow);
+  }
+  .btn-primary {
+    background: var(--brand-color);
+    color: white;
+  }
+  .btn-primary:hover {
+    opacity: 0.9;
+  }
+  
+  /* map */
+  .map-container {
+    flex: 1;
+    
+    position: relative;
+  }
+  
+
+  #map {
+    height: 100%;
+    width: 100%;
+  }
+  
