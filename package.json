@@ -1,0 +1,17 @@
+{
+  "name": "projetapprepartiesae_rosenkranz_terrier_sanjuan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JoeyRosenkranz/ProjetAppRepartieSAE_Rosenkranz_Terrier_Sanjuan.git"
+  },
+  "private": true,
+  "dependencies": {
+    "handlebars": "^4.7.8"
+  }
+}

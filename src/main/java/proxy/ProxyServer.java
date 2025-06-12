@@ -29,6 +29,7 @@ public class ProxyServer {
                     String json = rmiService.getAllRestaurants();
                     System.out.println("Données JSON : " + json);
 
+                    exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
                     // Utilise UTF-8 pour l'encodage des caractères
                     exchange.getResponseHeaders().add("Content-Type", "application/json");
                     byte[] responseBytes = json.getBytes(StandardCharsets.UTF_8);
@@ -74,6 +75,7 @@ public class ProxyServer {
                     // Appel du service RMI pour réserver une table
                     String json = rmiService.reserverTable(nom, prenom, nb, tel, id);
                     byte[] responseBytes = json.getBytes(StandardCharsets.UTF_8);
+                    exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
                     exchange.getResponseHeaders().add("Content-Type", "application/json");
                     exchange.sendResponseHeaders(200, responseBytes.length);
 

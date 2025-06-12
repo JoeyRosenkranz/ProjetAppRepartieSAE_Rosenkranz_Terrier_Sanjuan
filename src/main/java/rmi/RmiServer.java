@@ -17,6 +17,11 @@ public class RmiServer {
             }
             registry.rebind("RestaurantService", service);
             System.out.println("Serveur RMI lancé.");
+            // En attente de requêtes... (Ctrl+C pour arrêter le serveur)
+            System.out.println("Le serveur RMI est prêt à recevoir des requêtes.");
+            while (true) {
+                Thread.sleep(1000); // Le serveur reste actif
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
