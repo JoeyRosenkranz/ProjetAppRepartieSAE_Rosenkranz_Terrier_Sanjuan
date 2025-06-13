@@ -1,13 +1,12 @@
 package rmi;
 
-import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 import java.sql.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import io.github.cdimascio.dotenv.Dotenv;
 
-public class RestaurantServiceImpl extends UnicastRemoteObject implements RestaurantService {
+public class RestaurantServiceImpl implements RestaurantService {
     private final Connection connection;
 
     protected RestaurantServiceImpl() throws RemoteException {

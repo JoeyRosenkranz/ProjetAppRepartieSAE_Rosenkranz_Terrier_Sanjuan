@@ -15,7 +15,7 @@ public class ClientTest {
 
             System.out.println("Réservation...");
             String res = service.registerService();
-            System.out.println(res);
+            System.out.println(res);    
 
         } catch (Exception e) {
             e.printStackTrace();

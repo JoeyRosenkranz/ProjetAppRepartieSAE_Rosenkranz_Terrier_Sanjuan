@@ -1,6 +1,7 @@
 package proxy;
 
 import com.sun.net.httpserver.HttpServer;
+import rmi.RegistryService;
 import rmi.RestaurantService;
 
 import java.io.OutputStream;
@@ -13,8 +14,7 @@ import java.rmi.registry.Registry;
 public class ProxyServer {
     public static void main(String[] args) throws Exception {
         // Connexion au service RMI
-        Registry registry = LocateRegistry.getRegistry(InetAddress.getLocalHost().getHostAddress(), 1099);
-        RestaurantService rmiService = (RestaurantService) registry.lookup("RestaurantService");
+        RestaurantService rmiService = (RestaurantService) RegistryService.getService("RestaurantService", InetAddress.getLocalHost().getHostAddress(), 1099);
 
         // Serveur HTTP local
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
