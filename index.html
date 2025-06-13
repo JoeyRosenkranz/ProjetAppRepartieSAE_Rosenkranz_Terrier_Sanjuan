@@ -64,7 +64,6 @@
         <h3>{{name}}</h3>
         <p>{{address}}</p>
         <button class="btn btn-primary btn-reserve">Réserver</button>
-        <button class="btn btn-primary btn-lister">Lister tables</button>
       </li>
     {{/each}}
   </script>
@@ -84,5 +83,21 @@
       </li>
     {{/each}}
   </script>
+
+  
+  <script id="tpl-reservation-form" type="text/x-handlebars-template">
+    <form id="reservationForm">
+      <label>Nom : <input type="text" name="nom" required pattern="[A-Za-zÀ-ÿ\-\s]{2,}" title="Le nom doit contenir au moins 2 lettres."></label><br>
+      <label>Prénom : <input type="text" name="prenom" required pattern="[A-Za-zÀ-ÿ\-\s]{2,}" title="Le prénom doit contenir au moins 2 lettres."></label><br>
+      <label>Téléphone : <input type="tel" name="telephone" required pattern="^(0|\+33)[1-9](\d{2}){4}$" title="Numéro français attendu, ex: 0612345678 ou +33612345678"></label><br>
+      <label>Nombre de personnes : <input type="number" name="nb" min="1" max="30" required title="Nombre entre 1 et 30"></label><br>
+      <input type="hidden" name="idResto" value="{{id}}">
+      <button type="submit" class="btn btn-primary">Valider la réservation</button>
+      <button type="button" class="btn btn-secondary" id="cancelReservation">Annuler</button>
+    </form>
+  </script>
+
+  <div id="reservationModal" class="reservation-modal" style="display:none;"></div>
 </body>
 </html>
+
