@@ -66,7 +66,7 @@ restoListEl.addEventListener('click', e => {
 
         // Gestion soumission formulaire
         const form = document.getElementById('reservationForm');
-        form.onsubmit = function(ev) {
+        form.onsubmit = function (ev) {
             ev.preventDefault();
             const formData = new FormData(form);
             const nom = formData.get('nom');
@@ -77,21 +77,21 @@ restoListEl.addEventListener('click', e => {
             if (!nom || !prenom || !telephone || !nb || isNaN(nb)) return;
             fetch(`${API_BASE_URL}/reservation`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 body: `nom=${encodeURIComponent(nom)}&prenom=${encodeURIComponent(prenom)}&telephone=${encodeURIComponent(telephone)}&nb=${encodeURIComponent(nb)}&idResto=${encodeURIComponent(idResto)}`
             })
-            .then(res => res.json())
-            .then(data => {
-                alert(data.message || 'Réservation effectuée !');
-                modal.style.display = 'none';
-            })
-            .catch(err => {
-                alert('Erreur lors de la réservation');
-                console.error(err);
-            });
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message || 'Réservation effectuée !');
+                    modal.style.display = 'none';
+                })
+                .catch(err => {
+                    alert('Erreur lors de la réservation');
+                    console.error(err);
+                });
         };
         // Annulation
-        document.getElementById('cancelReservation').onclick = function() {
+        document.getElementById('cancelReservation').onclick = function () {
             modal.style.display = 'none';
         };
         return;
@@ -127,6 +127,34 @@ searchInput.addEventListener('input', () => {
         lastMarker = null;
     }
 });
+
+fetch(`${API_BASE_URL}/incidents`)
+    .then((res) => res.json())
+    .then((data) => {
+        data.incidents.forEach((incident) => {
+            // Extraction des coordonnées (ex: "48.616385078645706 6.166801886425236")
+            const [lat, lon] = incident.location.polyline.split(" ").map(Number);
+
+            const lieu = incident.location.location_description || incident.location.street || "Lieu inconnu";
+            const description = incident.short_description || "Travaux";
+            const debut = incident.starttime?.split("T")[0];
+            const fin = incident.endtime?.split("T")[0];
+
+            // Ajout du marqueur sur la carte
+            const marker = L.circleMarker([lat, lon], {
+                color: "red",
+                radius: 6,
+                fillOpacity: 0.7,
+            }).addTo(map);
+
+            // Popup avec info détaillée
+            marker.bindPopup(`
+        <strong>${description}</strong><br/>
+        📍 ${lieu}<br/>
+        📅 Du <strong>${debut}</strong> au <strong>${fin}</strong>
+      `);
+        });
+    });
 
 
 let stations = [];

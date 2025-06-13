@@ -7,6 +7,10 @@ import rmi.RestaurantService;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -91,6 +95,35 @@ public class ProxyServer {
                 exchange.sendResponseHeaders(405, -1);
             }
         });
+
+        server.createContext("/incidents", exchange -> {
+            if ("GET".equals(exchange.getRequestMethod())) {
+                try {
+                    // Appel HTTP vers l'API bloquée
+                    HttpClient client = HttpClient.newHttpClient();
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(URI.create("https://carto.g-ny.org/data/cifs/cifs_waze_v2.json"))
+                            .build();
+
+                    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                    String json = response.body();
+
+                    exchange.getResponseHeaders().add("Content-Type", "application/json");
+                    exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*"); // CORS
+                    exchange.sendResponseHeaders(200, json.getBytes().length);
+
+                    OutputStream os = exchange.getResponseBody();
+                    os.write(json.getBytes());
+                    os.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    exchange.sendResponseHeaders(500, -1);
+                }
+            } else {
+                exchange.sendResponseHeaders(405, -1);
+            }
+        });
+
 
         server.setExecutor(null); // Utilise l'exécuteur par défaut (thread pool)
         server.start();
