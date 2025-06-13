@@ -12,7 +12,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const restaurants = [
   { id: 1, name: 'Le Bon Miam',    address: '1 rue du Goût',          lat: 48.6925,   lng: 6.1848 },
   { id: 2, name: 'Chez Savoureux', address: '2 place de la Fourchette', lat: 48.69,     lng: 6.18   },
-  { id: 3, name: 'Chez Joey',      address: '1 rue de la Montagne',   lat: 49.079853, lng: 7.002365 }
+  { id: 3, name: 'Chez Joey',      address: '1 rue de la Montagne',   lat: 49.079853, lng: 7.002365 },
+  { id: 4, name: 'Chez Jonesy',      address: '26 Rue de France',   lat: 872406, lng: 2438104 }
 ];
 const tplResto    = Handlebars.compile(document.getElementById('tpl-restaurant').innerHTML);
 const restoListEl = document.getElementById('restaurantList');
