@@ -21,31 +21,26 @@ const tplResto    = Handlebars.compile(document.getElementById('tpl-restaurant')
 const tplResto = Handlebars.compile(document.getElementById('tpl-restaurant').innerHTML);
 
 const restoListEl = document.getElementById('restaurantList');
-const restaurants = fetch('http://localhost:8000/restaurants')
+let restaurants = [];
+fetch('http://localhost:8000/restaurants')
     .then(res => {
-        if (!res.ok) {
-            throw new Error(`Erreur HTTP ${res.status}`);
-        }
-        console.log('Chargement des restaurants réussi');
+        if (!res.ok) throw new Error(`Erreur HTTP ${res.status}`);
         return res.json();
     })
+    .then(data => data.map(r => ({
+        id: r.id,
+        name: r.nom,
+        address: r.adresse,
+        lat: r.latitude,
+        lng: r.longitude
+    })))
     .then(data => {
-        console.log('Données des restaurants:', data);
-        // changer les noms des variables de français à anglais
-        return data.map(r => ({
-            id: r.id,
-            name: r.nom,
-            address: r.adresse,
-            lat: r.latitude,
-            lng: r.longitude
-        }))
-    })
-    .then(data => {
+        restaurants = data; // <-- ici
         restoListEl.innerHTML = tplResto(data);
     })
     .catch(err => {
         console.error('Erreur de chargement des restaurants:', err);
-        return [];
+        restaurants = [];
     });
 
 
