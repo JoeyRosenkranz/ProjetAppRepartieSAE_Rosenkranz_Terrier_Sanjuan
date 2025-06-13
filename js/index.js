@@ -1,116 +1,117 @@
-import {listerStation} from './velib.js';
+// js/index.js
+import { listerStation } from './velib.js';
 
 const map = L.map('map').setView([48.692054, 6.184417], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap contributors'
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-// a changer par infos de la bd
-/*const restaurants = [
-  { id: 1, name: 'Le Bon Miam',    address: '1 rue du Goût',          lat: 48.6925,   lng: 6.1848 },
-  { id: 2, name: 'Chez Savoureux', address: '2 place de la Fourchette', lat: 48.69,     lng: 6.18   },
-<<<<<<< HEAD
-  { id: 3, name: 'Chez Joey',      address: '1 rue de la Montagne',   lat: 49.079853, lng: 7.002365 },
-  { id: 4, name: 'Chez Jonesy',      address: '26 Rue de France',   lat: 872406, lng: 2438104 }
-];
-const tplResto    = Handlebars.compile(document.getElementById('tpl-restaurant').innerHTML);
-=======
-  { id: 3, name: 'Chez Joey',      address: '1 rue de la Montagne',   lat: 49.079853, lng: 7.002365 }
-];*/
-const tplResto = Handlebars.compile(document.getElementById('tpl-restaurant').innerHTML);
-
+// fetch restaurants depuis votre API
 const restoListEl = document.getElementById('restaurantList');
-const restaurants = fetch('http://localhost:8000/restaurants')
-    .then(res => {
-        if (!res.ok) {
-            throw new Error(`Erreur HTTP ${res.status}`);
-        }
-        console.log('Chargement des restaurants réussi');
-        return res.json();
-    })
-    .then(data => {
-        console.log('Données des restaurants:', data);
-        // changer les noms des variables de français à anglais
-        return data.map(r => ({
-            id: r.id,
-            name: r.nom,
-            address: r.adresse,
-            lat: r.latitude,
-            lng: r.longitude
-        }))
-    })
-    .then(data => {
-        restoListEl.innerHTML = tplResto(data);
-    })
-    .catch(err => {
-        console.error('Erreur de chargement des restaurants:', err);
-        return [];
-    });
+const tplResto = Handlebars.compile(document.getElementById('tpl-restaurant').innerHTML);
+let restaurants = [];
 
+fetch('http://localhost:8000/restaurants')
+  .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
+  .then(data => {
+    restaurants = data.map(r => ({
+      id: r.id,
+      name: r.nom,
+      address: r.adresse,
+      lat: r.latitude,
+      lng: r.longitude
+    }));
+    restoListEl.innerHTML = tplResto(restaurants);
+  })
+  .catch(err => console.error('Erreur fetch restos:', err));
 
 let lastMarker = null;
+const formContainer = document.getElementById('formContainer');
 
-// clic resto  supprimer ancien marker, en poser un nouveau
-restoListEl.addEventListener('click', e => {
-    const item = e.target.closest('.restaurant-item');
-    if (!item) return;
+// Délégation d’événements dans la sidebar
+document.querySelector('.sidebar').addEventListener('click', e => {
+  const item = e.target.closest('.restaurant-item');
+  if (item) {
+    const id = +item.dataset.id;
+    const resto = restaurants.find(r => r.id === id);
 
-    const resto = restaurants.find(r => r.id === +item.dataset.id);
-    if (!resto) return;
+    // Si on clique sur Réserver
+    if (e.target.matches('.btn-reserve')) {
+      // effacer ancien marker et form
+      if (lastMarker) map.removeLayer(lastMarker);
+      formContainer.innerHTML = `
+        <form id="reserveForm">
+          <h3>Réserver @ ${resto.name}</h3>
+          <label>Nom</label><input name="nom" required>
+          <label>Prénom</label><input name="prenom" required>
+          <label>Convives</label><input name="convives" type="number" required>
+          <label>Téléphone</label><input name="tel" type="tel" required>
+          <input name="restoId" type="hidden" value="${resto.id}">
+          <button type="submit">Envoyer Réservation</button>
+        </form>`;
 
-    // enlever ancien marker
-    if (lastMarker) map.removeLayer(lastMarker);
-
-    // en poser un nouveau
-    lastMarker = L.marker([resto.lat, resto.lng])
-        .addTo(map)
+      // centrer + marker
+      lastMarker = L.marker([resto.lat, resto.lng]).addTo(map)
         .bindPopup(`<strong>${resto.name}</strong><br>${resto.address}`)
         .openPopup();
-
-    map.setView([resto.lat, resto.lng], 15);
-});
-
-
-const searchInput = document.getElementById('searchInput');
-searchInput.addEventListener('input', () => {
-    const q = searchInput.value.toLowerCase();
-    const filt = restaurants.filter(r => r.name.toLowerCase().includes(q));
-    restoListEl.innerHTML = tplResto(filt);
-
-    // nettoyer le marker courant si on change la liste
-    if (lastMarker) {
-        map.removeLayer(lastMarker);
-        lastMarker = null;
+      map.setView([resto.lat, resto.lng], 15);
     }
+
+    // Si on clique sur Lister tables
+    if (e.target.matches('.btn-lister')) {
+      // effacer ancien marker et form
+      if (lastMarker) map.removeLayer(lastMarker);
+      formContainer.innerHTML = `
+        <form id="listForm">
+          <h3>Tables dispo @ ${resto.name}</h3>
+          <label>Restaurant ID</label><input name="restoId" value="${resto.id}" readonly>
+          <button type="submit">Lister</button>
+        </form>
+        <div id="listResult"></div>`;
+
+      // centrer + marker
+      lastMarker = L.marker([resto.lat, resto.lng]).addTo(map)
+        .bindPopup(`<strong>${resto.name}</strong><br>${resto.address}`)
+        .openPopup();
+      map.setView([resto.lat, resto.lng], 15);
+    }
+  }
 });
 
+// Soumission des formulaires (ajax basique)
+formContainer.addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target;
+  if (f.id === 'reserveForm') {
+    const data = Object.fromEntries(new FormData(f).entries());
+    console.log('POST /reserve', data);
+    // fetch('http://localhost:8000/reserve', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) })
+    //   .then(...)
+  }
+  if (f.id === 'listForm') {
+    const restoId = f.restoId.value;
+    console.log('GET /tables?restoId=', restoId);
+    // fetch(`http://localhost:8000/tables?restoId=${restoId}`)
+    //   .then(r=>r.json()).then(json=>{
+    //     document.getElementById('listResult').innerHTML = JSON.stringify(json, null, 2);
+    //   })
+  }
+});
 
-let stations = [];
-listerStation(map).then(data => {
-    stations = data;
-
-    // clic voir carte d’une station
-    document.getElementById('stationList').addEventListener('click', e => {
-        const btn = e.target.closest('.btn-show');
-        if (!btn) return;
-        const id = btn.closest('.station-item').dataset.id;
-        const st = stations.find(s => s.id === id);
-        if (!st) return;
-
-        // enlever ancien marker
-        if (lastMarker) map.removeLayer(lastMarker);
-
-        // en poser un nouveau
-        lastMarker = L.marker([st.lat, st.lng])
-            .addTo(map)
-            .bindPopup(
-                `<strong>${st.name}</strong><br>` +
-                `${st.address}<br>` +
-                `🚲 ${st.num_bikes_available} — 🅿️ ${st.num_docks_available}`
-            )
-            .openPopup();
-
-        map.setView([st.lat, st.lng], 15);
-    });
+// Stations Vélib’
+listerStation(map).then(stations => {
+  document.querySelector('.sidebar').addEventListener('click', e => {
+    if (e.target.matches('.btn-show')) {
+      const item = e.target.closest('.station-item');
+      const id = item.dataset.id;
+      const st = stations.find(s => s.id === id);
+      if (lastMarker) map.removeLayer(lastMarker);
+      lastMarker = L.marker([st.lat, st.lng]).addTo(map)
+        .bindPopup(`<strong>${st.name}</strong><br>${st.address}`)
+        .openPopup();
+      map.setView([st.lat, st.lng], 15);
+      formContainer.innerHTML = ''; // vider le formulaire
+    }
+  });
 });

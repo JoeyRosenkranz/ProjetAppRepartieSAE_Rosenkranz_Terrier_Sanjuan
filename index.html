@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>NancyMap</title>
 
- 
+
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -13,13 +13,13 @@
     crossorigin=""
   />
 
-  
+ 
   <link rel="stylesheet" href="css/style.css">
 
-  
+ 
   <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js"></script>
 
-  
+ 
   <script
     defer
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -48,6 +48,9 @@
       </div>
       <ul id="restaurantList" class="restaurant-list"></ul>
 
+      <!-- zone de formulaire généré -->
+      <div id="formContainer"></div>
+
       <hr>
 
       <h2>Stations Vélib’</h2>
@@ -64,7 +67,7 @@
         <h3>{{name}}</h3>
         <p>{{address}}</p>
         <button class="btn btn-primary btn-reserve">Réserver</button>
-        <button class="btn btn-primary btn-lister">Lister tables</button>
+        <button class="btn btn-secondary btn-lister">Lister tables</button>
       </li>
     {{/each}}
   </script>
@@ -80,7 +83,7 @@
           &nbsp;|&nbsp;
           <span>🅿️ {{num_docks_available}}</span>
         </p>
-        <button class="btn btn-secondary btn-show">Voir sur la carte</button>
+        <button class="btn btn-tertiary btn-show">Voir sur la carte</button>
       </li>
     {{/each}}
   </script>
