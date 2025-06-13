@@ -3,18 +3,28 @@ package proxy;
 import com.sun.net.httpserver.HttpServer;
 import rmi.RestaurantService;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+//
+import service.OpenDataService;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.sun.net.httpserver.HttpExchange;
+import java.net.URLDecoder;
+import java.util.Arrays;
 
 public class ProxyServer {
     public static void main(String[] args) throws Exception {
         // Connexion au service RMI
         Registry registry = LocateRegistry.getRegistry(InetAddress.getLocalHost().getHostAddress(), 1099);
         RestaurantService rmiService = (RestaurantService) registry.lookup("RestaurantService");
+        OpenDataService openData = new OpenDataService("proxy.iut.local",3128);
+        Gson gson = new Gson();
 
         // Serveur HTTP local
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
@@ -91,9 +101,55 @@ public class ProxyServer {
                 exchange.sendResponseHeaders(405, -1);
             }
         });
+        // Proxy
+        server.createContext("/api/opendata", exchange -> {
+            if (!"GET".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(405, -1); return;
+            }
+            String raw = exchange.getRequestURI().getRawQuery();
+            String enc = Arrays.stream(raw.split("&"))
+                    .filter(s -> s.startsWith("url="))
+                    .map(s -> s.substring(4))
+                    .findFirst().orElse("");
+            String target = URLDecoder.decode(enc, StandardCharsets.UTF_8);
+            try {
+                JsonElement data = openData.fetchData(target);
+                sendJson(exchange, gson.toJson(data));
+            } catch (Exception e) {
+                e.printStackTrace();
+                exchange.sendResponseHeaders(500, -1);
+            }
+        });
+
+        // Incidents Grand Nancy
+        server.createContext("/api/incidents", exchange -> {
+            if (!"GET".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(405, -1); return;
+            }
+            try {
+                String urlInc = "https://data.grandnancy.fr/api/records/1.0/search/"
+                        + "?dataset=incidents-circulation&rows=100";
+                JsonElement data = openData.fetchData(urlInc);
+                sendJson(exchange, gson.toJson(data));
+            } catch (Exception e) {
+                e.printStackTrace();
+                exchange.sendResponseHeaders(500, -1);
+            }
+        });
+
 
         server.setExecutor(null); // Utilise l'exécuteur par défaut (thread pool)
         server.start();
         System.out.println("Serveur proxy HTTP démarré sur http://localhost:8000");
     }
+
+    private static void sendJson(HttpExchange ex, String json) throws IOException {
+        ex.getResponseHeaders().add("Content-Type", "application/json; charset=UTF-8");
+        byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
+        ex.sendResponseHeaders(200, bytes.length);
+        try (OutputStream os = ex.getResponseBody()) {
+            os.write(bytes);
+        }
+    }
+
 }

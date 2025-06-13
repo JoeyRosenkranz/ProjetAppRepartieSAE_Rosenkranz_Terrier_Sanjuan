@@ -2,6 +2,7 @@ package rmi;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import main.java.rmi.RestaurantServiceImpl;
 
 public class RmiServer {
     public static void main(String[] args) {
