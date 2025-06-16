@@ -1,6 +1,3 @@
-
-
-
 export async function listerStation(map) {
   try {
     // feztch
@@ -40,4 +37,29 @@ export async function listerStation(map) {
     console.error('Erreur Vélib’ :', err);
     return [];
   }
+}
+
+export function handleStationClick(map, stations, lastMarkerRef) {
+  document.getElementById('stationList').addEventListener('click', e => {
+    const btn = e.target.closest('.btn-show');
+    if (!btn) return;
+    const id = btn.closest('.station-item').dataset.id;
+    const st = stations.find(s => s.id === id);
+    if (!st) return;
+
+    // enlever ancien marker
+    if (lastMarkerRef.value) map.removeLayer(lastMarkerRef.value);
+
+    // en poser un nouveau
+    lastMarkerRef.value = L.marker([st.lat, st.lng])
+      .addTo(map)
+      .bindPopup(
+        `<strong>${st.name}</strong><br>` +
+        `${st.address}<br>` +
+        `🚲 ${st.num_bikes_available} — 🅿️ ${st.num_docks_available}`
+      )
+      .openPopup();
+
+    map.setView([st.lat, st.lng], 15);
+  });
 }

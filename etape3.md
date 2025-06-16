@@ -11,11 +11,11 @@
     - Ouvrez un terminal dans le répertoire racine de votre projet.
     - Exécutez d'abord (très important) la commande suivante pour exécuter le serveur RMI :
       ```bash
-      mvn exec:java -Dexec.mainClass="rmi.RmiServer"
+      mvn exec:java "-Dexec.mainClass=rmi.RmiServer"
       ```
     - Ensuite, dans un autre terminal, exécutez la commande suivante pour lancer le proxy :
       ```bash
-        mvn exec:java -Dexec.mainClass="proxy.ProxyServer"
+        mvn exec:java "-Dexec.mainClass=proxy.ProxyServer"
         ```
     - Assurez-vous que le port 8000 est ouvert et accessible.
     - Le proxy devrait maintenant être en cours d'exécution et prêt à rediriger les requêtes vers le serveur RMI.

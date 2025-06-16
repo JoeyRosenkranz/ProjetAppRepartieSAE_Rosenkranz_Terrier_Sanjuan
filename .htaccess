@@ -1,0 +1,8 @@
+# Page d'accueil par défaut
+DirectoryIndex www/index.html
+
+# Sécurité : interdire l'accès aux fichiers sensibles
+<FilesMatch "\.(env|sql|xml|md|json|jar|class)$">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
