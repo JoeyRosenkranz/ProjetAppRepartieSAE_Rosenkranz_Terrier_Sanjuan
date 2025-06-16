@@ -29,30 +29,26 @@ listerRestaurants(API_BASE_URL)
         restaurants = [];
     });
 
-// Chargement des stations Vélib
-listerStation(map);
-
 // Affichage des incidents sur la carte
 afficherIncidents(map, API_BASE_URL);
 
 let lastMarker = { value: null };
 
+// Chargement des stations Vélib et gestion des clics
+let stations = [];
+listerStation(map).then(data => {
+    stations = data;
+    handleStationClick(map, stations, lastMarker);
+});
 
 const searchInput = document.getElementById('searchInput');
 searchInput.addEventListener('input', () => {
     const q = searchInput.value.toLowerCase();
     const filt = restaurants.filter(r => r.name.toLowerCase().includes(q));
-    restoListEl.innerHTML = tplResto(filt);
-
+    renderTemplate('tpl-restaurant', filt, 'restaurantList');
     // nettoyer le marker courant si on change la liste
     if (lastMarker.value) {
         map.removeLayer(lastMarker.value);
         lastMarker.value = null;
     }
-});
-
-let stations = [];
-listerStation(map).then(data => {
-    stations = data;
-    handleStationClick(map, stations, lastMarker);
 });
