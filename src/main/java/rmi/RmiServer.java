@@ -1,5 +1,6 @@
 package rmi;
 
+import java.net.InetAddress;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
@@ -11,9 +12,8 @@ public class RmiServer {
 
             RestaurantService service = new RestaurantServiceImpl();
             ExportService.exportObject(service, "localhost", "RestaurantService", 0, 1099);
-            System.out.println("Serveur RMI lancé.");
+            System.out.println("Serveur RMI lancé sur " + InetAddress.getLocalHost().getHostAddress() + ":1099");
             // En attente de requêtes... (Ctrl+C pour arrêter le serveur)
-            System.out.println("Le serveur RMI est prêt à recevoir des requêtes.");
             // Boucle infinie pour maintenir le serveur actif
             while (System.in.read() != 'q') {
                 Thread.sleep(1000); // Le serveur reste actif

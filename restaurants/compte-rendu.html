@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Compte-rendu - Application Répartie Nancy</title>
+    <link rel="stylesheet" href="css/compte-rendu.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🌐 Application Répartie Nancy</h1>
+        <p class="subtitle">Système distribué de gestion de restaurants et données urbaines</p>
+    </div>
+
+    <div class="content">
+        <section class="section">
+            <h2>🏗️ Architecture</h2>
+            <p>
+                L'application repose sur une architecture répartie composée de :
+            </p>
+            <ul>
+                <li>Un serveur RMI (Java) qui interroge la base de données ou des API tierces</li>
+                <li>Un proxy HTTP (Java) qui sert les données en JSON pour le client web</li>
+                <li>Une interface client (HTML + Leaflet) qui affiche les données sur une carte</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>📊 Données disponibles</h2>
+            <ul>
+                <li>🚲 Stations VéloStan'Lib (données temps réel)</li>
+                <li>🚧 Incidents et travaux (données Grand Nancy)</li>
+                <li>🍽️ Restaurants (données issues de la base MySQL)</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>🧪 Tests des fonctionnalités</h2>
+            <p>
+                <a class="map-link" href="./index.html">🗺️ Accéder à la carte interactive</a>
+            </p>
+            <p>Exemples d'API disponibles :</p>
+            <ul>
+                <li>Requête REST : <code>GET /restaurants</code></li>
+                <li>Réservation de table via POST : <code>/reservation</code></li>
+                <li>Liste des incidents en JSON : <code>/incidents</code></li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>⚙️ Détails techniques</h2>
+            <ul>
+                <li>Port RMI : <code>1099</code></li>
+                <li>Port HTTP Proxy : <code>8000</code></li>
+                <li>Communication client → proxy → RMI → BDD/API</li>
+                <li>Technologies :
+                    <span class="tech-badge">Java</span>
+                    <span class="tech-badge">RMI</span>
+                    <span class="tech-badge">MySQL</span>
+                    <span class="tech-badge">HTML/JS</span>
+                    <span class="tech-badge">Leaflet</span>
+                </li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>🛠️ Installation & Configuration</h2>
+            <ul>
+                <li><strong>Base de données :</strong> Installation de MySQL, création de la base <code>resto_nancy</code> et des tables via <code>restaurants.sql</code> et <code>restaurants2.sql</code></li>
+                <li><strong>Configuration :</strong> Fichier <code>.env</code> à la racine du projet avec les variables <code>DB_URL</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code></li>
+                <li><strong>Compilation :</strong> Utilisation de Maven pour compiler et exécuter le serveur (<code>mvn exec:java</code>), ou compilation manuelle possible</li>
+                <li><strong>Lancement :</strong> Démarrer <code>rmiregistry</code> dans <code>target/classes</code>, puis le serveur RMI, ensuite le proxy HTTP</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>🔧 Schéma de l'architecture</h2>
+            <div class="architecture-diagram">
+                [Client Web HTML/JS]<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br/>
+                [Proxy HTTP Java (port 8000)]<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br/>
+                [Serveur RMI Java (port 1099)]<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br/>
+                [Base MySQL / API externes]
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>🔄 Exemple de flux de données</h2>
+            <ol>
+                <li>L'utilisateur consulte la carte ou réserve une table sur l'interface web</li>
+                <li>Le client envoie une requête HTTP (GET/POST) au proxy</li>
+                <li>Le proxy appelle le serveur RMI via Java RMI</li>
+                <li>Le serveur RMI interroge la base MySQL ou une API externe</li>
+                <li>La réponse remonte jusqu'au client web, affichée en JSON ou sur la carte</li>
+            </ol>
+        </section>
+
+        <section class="section">
+            <h2>💻 Exemple de code Java : Réservation via RMI</h2>
+            <pre><code>// Côté ProxyServer.java
+String json = rmiService.reserverTable(nom, prenom, nb, tel, id);
+
+// Côté RestaurantServiceImpl.java
+public String reserverTable(String nom, String prenom, int nb,
+                           String telephone, int idResto) throws RemoteException {
+    try (PreparedStatement stmt = connection.prepareStatement(
+        "INSERT INTO reservations (nom, prenom, nb_personnes, telephone, id_restaurant) VALUES (?, ?, ?, ?, ?)"
+    )) {
+        stmt.setString(1, nom);
+        stmt.setString(2, prenom);
+        stmt.setInt(3, nb);
+        stmt.setString(4, telephone);
+        stmt.setInt(5, idResto);
+        stmt.executeUpdate();
+
+        return new JSONObject()
+            .put("status", "ok")
+            .put("message", "Réservation enregistrée.")
+            .toString();
+    } catch (SQLException e) {
+        return new JSONObject()
+            .put("status", "error")
+            .put("message", e.getMessage())
+            .toString();
+    }
+}</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>🔐 Configuration .env attendue</h2>
+            <pre><code>DB_URL=jdbc:mysql://localhost:3306/resto_nancy
+DB_USER=root
+DB_PASSWORD=ton_mot_de_passe</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>✅ Tests & vérification</h2>
+            <ul>
+                <li>Test de la connexion à la base via IntelliJ ou <code>mysql</code> en ligne de commande</li>
+                <li>Test du serveur RMI avec <code>ClientTest.java</code></li>
+                <li>Test du proxy avec <code>curl http://localhost:8000/restaurants</code> ou Postman</li>
+                <li>Vérification de la réservation en base après un POST sur <code>/reservation</code></li>
+            </ul>
+        </section>
+
+        <section class="section authors">
+            <h2>👥 Équipe de développement</h2>
+            <ul>
+                <li>Nicolas SANJUAN</li>
+                <li>Joey ROSENKRANZ</li>
+                <li>Pacôme TERRIER</li>
+            </ul>
+        </section>
+    </div>
+</div>
+
+<button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+<script>
+    // Bouton retour en haut
+    window.onscroll = function() {
+        const backToTopBtn = document.querySelector('.back-to-top');
+        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+            backToTopBtn.classList.add('show');
+        } else {
+            backToTopBtn.classList.remove('show');
+        }
+    };
+
+    function scrollToTop() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }
+</script>
+
+</body>
+</html>

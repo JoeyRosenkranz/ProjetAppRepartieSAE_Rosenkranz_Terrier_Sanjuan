@@ -1,4 +1,4 @@
-# Script pour la 2ème partie du TP
+-- Script pour la 2ème partie du TP
 CREATE TABLE reservations
 (
     id            INT AUTO_INCREMENT PRIMARY KEY,
