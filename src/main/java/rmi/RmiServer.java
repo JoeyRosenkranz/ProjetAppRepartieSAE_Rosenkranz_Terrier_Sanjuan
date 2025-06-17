@@ -8,16 +8,14 @@ public class RmiServer {
     public static void main(String[] args) {
         try {
             // 👇 Force RMI à utiliser localhost (en mode développement)
-            System.setProperty("java.rmi.server.hostname", "127.0.0.1");
+            String ip = InetAddress.getLocalHost().getHostAddress();
+            System.setProperty("java.rmi.server.hostname", ip);
 
             RestaurantService service = new RestaurantServiceImpl();
             ExportService.exportObject(service, "localhost", "RestaurantService", 0, 1099);
-            System.out.println("Serveur RMI lancé sur " + InetAddress.getLocalHost().getHostAddress() + ":1099");
+            System.out.println("Serveur RMI lancé sur " + ip + ":1099");
             // En attente de requêtes... (Ctrl+C pour arrêter le serveur)
-            // Boucle infinie pour maintenir le serveur actif
-            while (System.in.read() != 'q') {
-                Thread.sleep(1000); // Le serveur reste actif
-            }
+            Thread.sleep(Long.MAX_VALUE); // Bloque le thread principal pour que le serveur reste actif
 
         } catch (Exception e) {
             e.printStackTrace();

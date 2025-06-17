@@ -62,6 +62,10 @@ public class ProxyServer {
                             case "idResto" -> id = Integer.parseInt(pair[1]);
                         }
                     }
+                    if (nom.isBlank() || prenom.isBlank() || id == 0 || nb <= 0 || tel.isBlank()) {
+                        sendError(exchange, 400);
+                        return;
+                    }
                     String json = rmiService.reserverTable(nom, prenom, nb, tel, id);
                     sendJsonResponse(exchange, json);
                 } catch (Exception e) {
